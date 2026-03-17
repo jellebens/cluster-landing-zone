@@ -1,0 +1,27 @@
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+environment: "dev"
+
+namespace:
+  name: "" # Name of the landing zone, for example "iddp-dev"
+
+ingress:
+  enabled: false
+
+project:
+   # Four letter code for the project
+  code:  "" # 4 letter identifier for example: "iddp"
+  fourc-id: "" # for example "SYS-05394"
+
+rbac:
+  # The AD group that will get the contributer role
+  contributer: 
+    - ""
+  admin:
+    - ""
+  # The AD group that will get the reader role"
+  reader:
+    - ""
+  

@@ -1,0 +1,9 @@
+kind: role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: contributor-role
+  namespace: {{ .Values.namespace.name }}
+rules: 
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
