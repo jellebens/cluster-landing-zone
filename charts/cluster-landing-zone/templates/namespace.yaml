@@ -1,4 +1,4 @@
-kind: namespace
+kind: Namespace
 apiVersion: v1  
 metadata:
   name: {{ .Values.namespace.name }}
@@ -6,3 +6,5 @@ metadata:
     code: "{{ .Values.project.code }}"
     fourc-id: "{{ .Values.project.fourcId }}"
     environment: "{{ .Values.environment }}"
+  labels:
+    app.kubernetes.io/managed-by: argocd
