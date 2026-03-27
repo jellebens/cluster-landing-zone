@@ -1,10 +1,9 @@
 kind: Namespace
 apiVersion: v1  
 metadata:
-  name: {{ .Values.namespace.name }}
+  name: {{ include "cluster-landing-zone.namespace" . }}
   annotations:
     code: "{{ .Values.project.code }}"
-    fourc-id: "{{ .Values.project.fourcId }}"
     environment: "{{ .Values.environment }}"
   labels:
     app.kubernetes.io/managed-by: argocd

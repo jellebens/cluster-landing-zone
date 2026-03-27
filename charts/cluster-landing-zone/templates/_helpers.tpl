@@ -1,62 +1,23 @@
 {{/*
-Expand the name of the chart.
-*/}}
-{{- define "cluster-landing-zone.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+Create the namespace name:
+ucb-<project.code>-<namespace.name>
 
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
+Rules:
+- project.code must be exactly 4 characters
+- namespace.name can not be empty
 */}}
-{{- define "cluster-landing-zone.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-{{- end }}
+{{- define "cluster-landing-zone.namespace" -}}
+{{- $projectCode := required "project.code is required" .Values.project.code | lower | trim -}}
+{{- $namespaceName := required "ClusterLandingZone.name is required" .Values.ClusterLandingZone.name | lower | trim -}}
 
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "cluster-landing-zone.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- if ne (len $projectCode) 4 -}}
+{{- fail "project.code must be exactly 4 characters" -}}
+{{- end -}}
 
-{{/*
-Common labels
-*/}}
-{{- define "cluster-landing-zone.labels" -}}
-helm.sh/chart: {{ include "cluster-landing-zone.chart" . }}
-{{ include "cluster-landing-zone.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
+{{- if eq $namespaceName "" -}}
+{{- fail "namespace.name must not be empty" -}}
+{{- end -}}
 
-{{/*
-Selector labels
-*/}}
-{{- define "cluster-landing-zone.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "cluster-landing-zone.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "cluster-landing-zone.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "cluster-landing-zone.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
+{{- $fullName := printf "ucb-%s-%s" $projectCode $namespaceName -}}
+{{- $fullName | replace "_" "-" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
